@@ -15,6 +15,11 @@ void setup( ) {
  s.attach( A_WIFIBEGIN , wifiBegin );
  s.attach( A_SSID , wifiSSID );
  s.attach( A_BSSID , wifiBSSID );
+ s.attach( A_MAC , wifiMAC );
+ s.attach( A_IP , wifiIP );
+ s.attach( A_SUBNET , wifiSubnet );
+
+
 
 
 }
@@ -70,14 +75,48 @@ void wifiSSID( void ) {
 
 
 /**
- * Return the AM address of the router
+ * Return the MAC address of the router
  */
 void wifiBSSID( void ) {
-	char bssid[18] = { 0 };
-	String Str_bssid;
-	Str_bssid = WiFi.BSSIDstr( );
-	Str_bssid.toCharArray( bssid , sizeof( bssid ) );
-    s.sendAck( "s" , bssid );
+	uint8_t * bssid;
+	bssid = WiFi.BSSID();
+    s.sendAck( "iiiiii" , bssid[0] , bssid[1] , bssid[2] , bssid[3]  , bssid[4] , bssid[5]  );
 }
 
 
+/**
+ * Return the MAC address of the ESP8266 module
+ */
+void wifiMAC( void ) {
+	byte mac[6];
+	WiFi.macAddress(mac);
+    s.sendAck( "iiiiii" , mac[0] , mac[1] , mac[2] , mac[3]  , mac[4] , mac[5]  );
+}
+
+
+/**
+ * Return the IP address of the ESP8266 module
+ */
+void wifiIP( void ) {
+	char ip[16];
+	IPAddress ip_adr;
+	String ip_str;
+	ip_adr = WiFi.localIP( );
+	ip_str = ip_adr.toString();
+	ip_str.toCharArray( ip , sizeof ( ip ));
+    s.sendAck( "s" , ip  );
+}
+
+
+/**
+ * Return the IP address of the ESP8266 module
+ */
+void wifiSubnet( void ) {
+	char subnet[16];
+	IPAddress subnet_adr;
+	String subnet_str;
+	subnet_adr = WiFi.subnetMask( );
+	subnet_str = subnet_adr.toString();
+	subnet_str.toCharArray( subnet , sizeof ( subnet ));
+    s.sendAck( "s" , subnet  );
+}
