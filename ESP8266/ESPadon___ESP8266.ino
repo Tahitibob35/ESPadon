@@ -98,13 +98,11 @@ void wifiMAC( void ) {
  * Return the IP address of the ESP8266 module
  */
 void wifiIP( void ) {
-	char ip[16];
 	IPAddress ip_adr;
-	String ip_str;
 	ip_adr = WiFi.localIP( );
-	ip_str = ip_adr.toString();
-	ip_str.toCharArray( ip , sizeof ( ip ));
-    s.sendAck( "s" , ip  );
+    s.sendAck( "iiii" , ip_adr[0], ip_adr[1] , ip_adr[2], ip_adr[3] );
+
+
 }
 
 
@@ -112,11 +110,7 @@ void wifiIP( void ) {
  * Return the IP address of the ESP8266 module
  */
 void wifiSubnet( void ) {
-	char subnet[16];
 	IPAddress subnet_adr;
-	String subnet_str;
 	subnet_adr = WiFi.subnetMask( );
-	subnet_str = subnet_adr.toString();
-	subnet_str.toCharArray( subnet , sizeof ( subnet ));
-    s.sendAck( "s" , subnet  );
+    s.sendAck( "iiii" , subnet_adr[0], subnet_adr[1] , subnet_adr[2], subnet_adr[3] );
 }
