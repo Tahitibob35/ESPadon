@@ -26,12 +26,18 @@ class ESPadon
 {
   public:
 	ESPadon( Stream &s );
-	int httpGET( char * url );         // Open the URL
-	bool SSID( char * ssid );          // Get the SSID
+	int httpGET( char * url );                  // Open the URL
+	bool SSID( char * ssid );                   // Get the SSID
+	int status( void );                         // Get the status
+	bool disconnect( void );                    // Disconnects the ESP8266 module from the current network.
+	int begin( char * ssid , char * password ); // Disconnects the ESP8266 module to the network.
+
+
+	SerialComm sc;
+
      
   private:
 	Stream *_serial;
-	SerialComm sc;
 };
 
 #endif

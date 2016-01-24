@@ -23,11 +23,11 @@ void loop( ) {
     /*if ( mySerial.available( ) ) {
       s.check_reception( );
       }*/
-    unsigned long currentMillis = millis();
+
     Serial.println( "Send msg" );
     char url[] = "http://192.168.0.10:8000/";
     int wstatus = esp.httpGET( url );
-    Serial.print( "Status : " );
+    Serial.print( "HTTP Status : " );
     Serial.println( wstatus );
 
     char ssid[50] = "";
@@ -36,7 +36,62 @@ void loop( ) {
     	Serial.println( ssid );
     }
 
-  delay(5000);
+    Serial.print( "ESP8266 status : " );
+    Serial.println( esp.status( ) );
+
+    delay(5000);
+
+    Serial.println( "Disconnect" );
+    esp.disconnect( );
+
+    delay(5000);
+
+    Serial.print( "ESP8266 status : " );
+    Serial.println( esp.status( ) );
+
+    delay(5000);
+
+    char nssid[] = "TahitibobNetwork";
+    char npass[] = "calimeroestgentil";
+    int res = 0;
+    res  = esp.begin( nssid , npass );
+
+    Serial.print( "Connection result : " );
+    Serial.println( res );
+
+
+
+    delay(5000);
+
+    Serial.print( "ESP8266 status : " );
+    Serial.println( esp.status( ) );
+
+    delay(5000);
+
+    Serial.print( "ESP8266 status : " );
+    Serial.println( esp.status( ) );
+
+    delay(5000);
+
+    Serial.print( "ESP8266 status : " );
+    Serial.println( esp.status( ) );
+
+    delay(5000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
