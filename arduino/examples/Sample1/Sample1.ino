@@ -45,9 +45,9 @@ void loop( ) {
     while ( 1 ) {
     Serial.print( "ESP8266 status : " );
     Serial.println( esp.status( ) );
-    }*/
+    }
 
-    delay(5000);
+    delay(5000);*/
 
     int mac[6];
     if ( esp.macAddress( mac ) ){
@@ -122,11 +122,9 @@ void loop( ) {
     delay(5000);
 
     Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
+    Serial.println( esp.status( ) );*/
 
     delay(5000);
-    */
-
 
 
 
