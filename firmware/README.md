@@ -1,4 +1,4 @@
 # ESPadon
 
 
-esptool -vv -cd ck -cb 115200 -cp /dev/ttyUSB1 -ca 0x00000 -cf ESP8266.ino.bin
+./esptool.py --port /dev/ttyUSB1 write_flash  0x00000  ESP8266.ino.generic.bin
