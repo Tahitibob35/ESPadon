@@ -4,13 +4,13 @@ import time
 ssid = "TahitibobNetwork"
 password = "calimeroestgentil"
 
-arduino = pySerialComm.SerialComm('/dev/ttyUSB0', baudrate=115200)
+arduino = pySerialComm.SerialComm('/dev/ttyUSB0', baudrate=9600)
 
 
 
 while True:
     print("Status")
-    resp = arduino.sendmessage(2, ack=True)
+    resp = arduino.sendmessage(2, ("e",), ack=True)
     values = arduino.parsedata("i", resp)
     print(values)
     if values[0] == 3:
@@ -18,8 +18,9 @@ while True:
     time.sleep(2)
 
 while True:    
-    resp = arduino.sendmessage(6, ack=True)
-    print(arduino.parsedata("s", resp))
+    resp = arduino.sendmessage(11, ("http://192.168.0.10:8000/",), ack=True)
+    print(arduino.parsedata("i", resp))
+    time.sleep(10)
 
 
 """print("Status")
