@@ -3,8 +3,10 @@
   Created by David Hautbois.
   Released into the public domain.
 */
-#ifndef espadon
+#ifndef espadon_h
 #define espadon_h
+
+#include "serialcomm.h"
 
 
 /*
@@ -30,9 +32,13 @@
 class ESPadon
 {
   public:
-	ESPadon( );
+	ESPadon( Stream &s );
+	int httpGET( char * url );
+	bool SSID( char * ssid );
      
   private:
+	Stream *_serial;
+	SerialComm sc;
 };
 
 #endif
