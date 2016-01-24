@@ -10,7 +10,9 @@ ESPadon::ESPadon( Stream &s ): _serial( &s ) {
 	this->sc = SerialComm ( *_serial );
 }
 
-
+/**
+ * Open the URL
+ */
 int ESPadon::httpGET( char * url ) {
     if ( sc.sendMessage( 11 , true , "s", url) ) {
         int wstatus = 0;
@@ -20,6 +22,10 @@ int ESPadon::httpGET( char * url ) {
     return -1;
 }
 
+
+/**
+ * Get the SSID
+ */
 bool ESPadon::SSID( char * ssid ) {
     if ( sc.sendMessage( 5 , true ) ) {
         sc.getData( "s" , ssid );

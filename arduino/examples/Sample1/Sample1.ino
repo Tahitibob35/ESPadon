@@ -8,16 +8,12 @@
 SoftwareSerial mySerial( 11 , 10 );
 ESPadon esp( mySerial );
 
-unsigned long previousMillis = 0;
-const long interval = 2000;
-
 
 void setup() {
   Serial.begin( 9600 );
   mySerial.begin( 9600 );
 
 
-  // Attach the action #2 to the actionB function
   Serial.println( "Ready to play...." );
 }
 
@@ -40,8 +36,6 @@ void loop( ) {
     	Serial.println( ssid );
     }
 
-
-    //Serial.println( wstatus );
   delay(5000);
 }
 
