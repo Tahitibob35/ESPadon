@@ -9,7 +9,7 @@ SerialComm s( Serial );
 void setup( ) {
   // put your setup code here, to run once:
 
- Serial.begin( 115200 );
+ Serial.begin( 9600 );
  s.attach( A_WIFISTATUS , wifiStatus );
  s.attach( A_WIFIDISCONN , wifiDisconnect );
  s.attach( A_WIFIBEGIN , wifiBegin );
