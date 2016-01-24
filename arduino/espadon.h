@@ -31,6 +31,10 @@ class ESPadon
 	int status( void );                         // Get the status
 	bool disconnect( void );                    // Disconnects the ESP8266 module from the current network.
 	int begin( char * ssid , char * password ); // Disconnects the ESP8266 module to the network.
+	bool BSSID( int * bssid );                  // Get the BSSID
+	bool macAddress( int * mac );               // Get the Mac Address
+	bool localIP ( int * ip );                  // Get the IP Address
+	bool subnetMask ( int * ip );               // Get the subnet
 
 
 	SerialComm sc;

@@ -24,6 +24,12 @@ void loop( ) {
       s.check_reception( );
       }*/
 
+	/*char nssid[] = "TahitibobNetwork";
+    char npass[] = "calimeroestgentil";
+    int res = 0;
+    res  = esp.begin( nssid , npass );
+    delay(5000);
+
     Serial.println( "Send msg" );
     char url[] = "http://192.168.0.10:8000/";
     int wstatus = esp.httpGET( url );
@@ -36,10 +42,52 @@ void loop( ) {
     	Serial.println( ssid );
     }
 
+    while ( 1 ) {
     Serial.print( "ESP8266 status : " );
     Serial.println( esp.status( ) );
+    }*/
 
     delay(5000);
+
+    int mac[6];
+    if ( esp.macAddress( mac ) ){
+    	Serial.print( "MAC : " );
+    	for (int i=0 ; i<6 ; i++ ) {
+    	    Serial.print( mac[i] , HEX );
+    	}
+    	Serial.println( "" );
+    }
+
+    int bssid[6];
+    if ( esp.BSSID( bssid ) ){
+    	Serial.print( "BSSID : " );
+    	for (int i=0 ; i<6 ; i++ ) {
+    	    Serial.print( bssid[i] , HEX );
+    	}
+    	Serial.println( "" );
+    }
+
+    int ip[4];
+    if ( esp.localIP( ip ) ){
+    	Serial.print( "IP : " );
+    	for (int i=0 ; i<4 ; i++ ) {
+    	    Serial.print( ip[i] , DEC );
+    	}
+    	Serial.println( "" );
+    }
+
+    if ( esp.subnetMask( ip ) ){
+    	Serial.print( "Subnet mask : " );
+    	for (int i=0 ; i<4 ; i++ ) {
+    	    Serial.print( ip[i] , DEC );
+    	}
+    	Serial.println( "" );
+    }
+
+
+
+
+    /*
 
     Serial.println( "Disconnect" );
     esp.disconnect( );
@@ -77,6 +125,7 @@ void loop( ) {
     Serial.println( esp.status( ) );
 
     delay(5000);
+    */
 
 
 
