@@ -2,7 +2,7 @@ import pySerialComm
 import time
 
 ssid = "TahitibobNetwork"
-password = "calimeroestgentil"
+password = "XxXxXxX"
 
 arduino = pySerialComm.SerialComm('/dev/ttyUSB1', baudrate=9600)
 

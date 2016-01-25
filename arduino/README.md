@@ -18,10 +18,10 @@ void setup() {
 # Main fonctions
 
 ```C
-char ssid[] = "MyNetWorkSSID";                   # Connection
-char npass[] = "My_Passphrase";
+char my_ssid[] = "MyNetWorkSSID";                # Connection
+char my_passphrase[] = "My_Passphrase";
 int result = 0;
-result  = esp.begin( nssid , npass );            # https://www.arduino.cc/en/Reference/WiFiBegin
+result  = esp.begin( my_ssid , my_passphrase );  # https://www.arduino.cc/en/Reference/WiFiBegin
 delay(5000);
 
 char url[] = "http://192.168.0.10:8000/";        # Outgoing HTTP request
