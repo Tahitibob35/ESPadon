@@ -27,3 +27,6 @@ The [SerialComm](https://github.com/Tahitibob35/SerialComm) library.
 [Library documentation and source code](https://github.com/Tahitibob35/ESPadon/tree/master/arduino)
 
 [The pre-built firmware](https://github.com/Tahitibob35/ESPadon/tree/master/firmware)
+
+## Contact
+david.hautbois@free.fr
