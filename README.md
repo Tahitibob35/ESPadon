@@ -20,4 +20,4 @@ esp.httpGET( "http://google.fr" );
 
 ## Requirements for firmware building and the Arduino library
 
-The [https://github.com/Tahitibob35/SerialComm](SerialComm) library.
+The [SerialComm](https://github.com/Tahitibob35/SerialComm) library.
