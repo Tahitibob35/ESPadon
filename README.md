@@ -1,4 +1,23 @@
 # ESPadon
 
+## Description
+ESPadon simlifies the use of the ESP8266 module from your Arduino board.
+The project provides an Arduino library and a dedicated ESP8266 firmware.
 
-esptool -vv -cd ck -cb 115200 -cp /dev/ttyUSB1 -ca 0x00000 -cf ESP8266.ino.bin
+## Example
+
+```C
+SoftwareSerial mySerial( 11 , 10 );
+ESPadon esp( mySerial );
+mySerial.begin( 9600 );
+esp.begin( "MySSID" , "MyPassPhrase" );
+
+int ip[4];
+esp.localIP( ip );
+
+esp.httpGET( "http://google.fr" );
+```
+
+## Requirements for firmware building and the Arduino library
+
+The [https://github.com/Tahitibob35/SerialComm](SerialComm) library.
