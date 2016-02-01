@@ -117,3 +117,10 @@ bool ESPadon::subnetMask ( int * ip ) {
 }
 
 
+/**
+ * Start HTTP server
+ */
+bool ESPadon::startHTTPServer ( int port ) {
+    return sc.sendMessage( 10 , false , "i" , port );
+}
+

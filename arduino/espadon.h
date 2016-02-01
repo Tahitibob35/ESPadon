@@ -2,7 +2,7 @@
   espadon.h - Library for the ESP8266 module
   Created by David Hautbois.
   Released into the public domain.
-*/
+ */
 #ifndef espadon_h
 #define espadon_h
 
@@ -24,24 +24,24 @@
 
 class ESPadon
 {
-  public:
-	ESPadon( Stream &s );
-	int httpGET( char * url );                  // Open the URL
-	bool SSID( char * ssid );                   // Get the SSID
-	int status( void );                         // Get the status
-	bool disconnect( void );                    // Disconnects the ESP8266 module from the current network.
-	int begin( char * ssid , char * password ); // Disconnects the ESP8266 module to the network.
-	bool BSSID( int * bssid );                  // Get the BSSID
-	bool macAddress( int * mac );               // Get the Mac Address
-	bool localIP ( int * ip );                  // Get the IP Address
-	bool subnetMask ( int * ip );               // Get the subnet
+    public:
+        ESPadon( Stream &s );
+        int httpGET( char * url );                  // Open the URL
+        bool SSID( char * ssid );                   // Get the SSID
+        int status( void );                         // Get the status
+        bool disconnect( void );                    // Disconnects the ESP8266 module from the current network.
+        int begin( char * ssid , char * password ); // Disconnects the ESP8266 module to the network.
+        bool BSSID( int * bssid );                  // Get the BSSID
+        bool macAddress( int * mac );               // Get the Mac Address
+        bool localIP ( int * ip );                  // Get the IP Address
+        bool subnetMask ( int * ip );               // Get the subnet
+        bool startHTTPServer ( int port );          // Start the HTTP server on the specified port
+
+        SerialComm sc;
 
 
-	SerialComm sc;
-
-     
-  private:
-	Stream *_serial;
+    private:
+        Stream *_serial;
 };
 
 #endif
