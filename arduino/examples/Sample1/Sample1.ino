@@ -15,17 +15,23 @@ void setup() {
 
 
   Serial.println( "Ready to play...." );
+
+  esp.startHTTPServer ( 80 );
+  esp.sc.attach( 2 , incoming);
+
 }
 
 
 void loop( ) {
 
-    /*if ( mySerial.available( ) ) {
-      s.check_reception( );
-      }*/
+    Serial.println ( "A loop..." );
+
+    if ( mySerial.available( ) ) {
+        esp.sc.check_reception( );
+    }
 
 	/*char nssid[] = "TahitibobNetwork";
-    char npass[] = "XxXxXxX";
+    char npass[] = "calimeroestgentil";
     int res = 0;
     res  = esp.begin( nssid , npass );
     delay(5000);
@@ -40,14 +46,14 @@ void loop( ) {
     if ( esp.SSID( ssid ) ){
     	Serial.print( "SSID : " );
     	Serial.println( ssid );
-    }
+    }*/
 
-    while ( 1 ) {
+
     Serial.print( "ESP8266 status : " );
     Serial.println( esp.status( ) );
-    }
+    delay(2000);
 
-    delay(5000);*/
+    /*delay(5000);
 
     int mac[6];
     if ( esp.macAddress( mac ) ){
@@ -100,7 +106,7 @@ void loop( ) {
     delay(5000);
 
     char nssid[] = "TahitibobNetwork";
-    char npass[] = "XxXxXxX";
+    char npass[] = "calimeroestgentil";
     int res = 0;
     res  = esp.begin( nssid , npass );
 
@@ -125,20 +131,9 @@ void loop( ) {
     Serial.println( esp.status( ) );*/
 
     delay(5000);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
+void incoming ( void ) {
+    Serial.println( "incoming !!!" );
 
+}
