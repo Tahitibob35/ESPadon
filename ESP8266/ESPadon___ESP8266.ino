@@ -7,6 +7,7 @@
 SerialComm s( Serial );
 ESP8266WebServer* httpserver = NULL;
 bool httpserverstarted = false;
+bool httpserverconfigured = false;
 
 
 
@@ -147,8 +148,10 @@ void startHTTPServer( void ) {
         return;
     int port = 0;
     s.getData( "i" , &port );
-    httpserver = new ESP8266WebServer( 80 );
-    httpserver->onNotFound( handleHTTPRequest );
+    httpserver = new ESP8266WebServer( port );
+    if ( !httpserverconfigured )
+        httpserver->onNotFound( handleHTTPRequest );
+        httpserverconfigured = true;
     httpserver->begin();
     httpserverstarted = true;
 }
