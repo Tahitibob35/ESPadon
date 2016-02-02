@@ -36,6 +36,7 @@ class ESPadon
         bool localIP ( int * ip );                  // Get the IP Address
         bool subnetMask ( int * ip );               // Get the subnet
         bool startHTTPServer ( int port );          // Start the HTTP server on the specified port
+        bool getHTTPRequest ( char * url , int urlsize , ... );
 
         SerialComm sc;
 

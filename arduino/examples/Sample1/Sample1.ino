@@ -92,9 +92,6 @@ void loop( ) {
 
 
 
-
-    /*
-
     Serial.println( "Disconnect" );
     esp.disconnect( );
 
@@ -135,5 +132,16 @@ void loop( ) {
 
 void incoming ( void ) {
     Serial.println( "incoming !!!" );
+    char url[30] = "";
+    int size;
+    char val1[20] = "";
+    //char val2[20] = "";
+    //char val3[20] = "";
+
+
+    esp.getHTTPRequest ( url , sizeof( url ) , val1 , sizeof(val1) );
+
+    Serial.println( url );
+    Serial.println( val1 );
 
 }

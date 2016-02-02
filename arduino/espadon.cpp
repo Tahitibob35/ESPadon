@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include "serialcomm.h"
 #include "espadon.h"
+#include <stdarg.h>
 
 
 // Constructeur
@@ -124,3 +125,24 @@ bool ESPadon::startHTTPServer ( int port ) {
     return sc.sendMessage( 10 , false , "i" , port );
 }
 
+
+/**
+ * Get HTTP request
+ */
+bool ESPadon::getHTTPRequest ( char * url , int urlsize, ... ) {
+
+
+    va_list args;
+    va_start( args, urlsize );
+    int args_count;
+    /*
+    char val1[20] = "";
+    char murl[30];
+    sc.getData( "s"  , url , 30  );
+    Serial.println ( murl );*/
+    sc.getData( "sis"  , url , urlsize , &args_count , args  );
+
+    Serial.print( "getHTTPRequest : args_count : " );
+    Serial.println( args_count );
+    return true;
+}
