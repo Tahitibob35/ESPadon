@@ -131,18 +131,26 @@ bool ESPadon::startHTTPServer ( int port ) {
  */
 bool ESPadon::getHTTPRequest ( char * url , int urlsize, ... ) {
 
+    sc.getString( url , urlsize);
+    int args_count = sc.getInt( );
+
+
 
     va_list args;
     va_start( args, urlsize );
-    int args_count;
+    for ( int i = 0 ; i < args_count ; i++) {
+        char *s = va_arg( args , char * );
+        sc.getString( s , 20 );
+
+    }
     /*
     char val1[20] = "";
     char murl[30];
     sc.getData( "s"  , url , 30  );
-    Serial.println ( murl );*/
+    Serial.println ( murl );
     sc.getData( "sis"  , url , urlsize , &args_count , args  );
 
     Serial.print( "getHTTPRequest : args_count : " );
-    Serial.println( args_count );
+    Serial.println( args_count );*/
     return true;
 }
