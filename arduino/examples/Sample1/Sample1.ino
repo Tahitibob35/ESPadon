@@ -24,7 +24,7 @@ void setup() {
 
 void loop( ) {
 
-    Serial.println ( "A loop..." );
+    //Serial.println ( "A loop..." );
 
     if ( mySerial.available( ) ) {
         esp.sc.check_reception( );
@@ -46,14 +46,14 @@ void loop( ) {
     if ( esp.SSID( ssid ) ){
     	Serial.print( "SSID : " );
     	Serial.println( ssid );
-    }*/
+    }
 
 
     Serial.print( "ESP8266 status : " );
     Serial.println( esp.status( ) );
     delay(2000);
 
-    /*delay(5000);
+    delay(5000);
 
     int mac[6];
     if ( esp.macAddress( mac ) ){
@@ -127,21 +127,35 @@ void loop( ) {
     Serial.print( "ESP8266 status : " );
     Serial.println( esp.status( ) );*/
 
-    delay(5000);
+    //delay(2000);
 }
 
 void incoming ( void ) {
     Serial.println( "incoming !!!" );
     char url[30] = "";
-    int size;
     char val1[20] = "";
-    //char val2[20] = "";
-    //char val3[20] = "";
+    char val2[20] = "";
+    char val3[20] = "";
+    int rcv_args = 0;
+
+    int max_args = 3;
 
 
-    esp.getHTTPRequest ( url , sizeof( url ) , val1 , sizeof(val1) );
+    esp.getHTTPRequest ( url , sizeof( url ) , max_args , &rcv_args\
+                       , val1 , sizeof(val1) \
+                       , val2 , sizeof(val2) \
+                       , val3 , sizeof(val3) \
+                       );
 
+    Serial.print( "Url : " );
     Serial.println( url );
+    Serial.print( "args_count : " );
+    Serial.println( rcv_args );
+    Serial.print( "val1 : " );
     Serial.println( val1 );
+    Serial.print( "val2 : " );
+    Serial.println( val2 );
+    Serial.print( "val3 : " );
+    Serial.println( val3 );
 
 }
