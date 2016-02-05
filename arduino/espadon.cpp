@@ -15,7 +15,7 @@ ESPadon::ESPadon( Stream &s ): _serial( &s ) {
  * Open the URL
  */
 int ESPadon::httpGET( char * url ) {
-    if ( sc.sendMessage( 11 , true , "s", url) ) {
+    if ( sc.sendMessage( A_HTTPGET , true , "s", url) ) {
         int wstatus = 0;
         sc.getData( "i" , &wstatus );
         return wstatus;
@@ -28,7 +28,7 @@ int ESPadon::httpGET( char * url ) {
  * Get the SSID
  */
 bool ESPadon::SSID( char * ssid ) {
-    if ( sc.sendMessage( 5 , true ) ) {
+    if ( sc.sendMessage( A_SSID , true ) ) {
         sc.getData( "s" , ssid , 50);
         return true;
     }
@@ -41,7 +41,7 @@ bool ESPadon::SSID( char * ssid ) {
  */
 int ESPadon::status( void ) {
 	int status = 0;
-    if ( sc.sendMessage( 2 , true ) ) {
+    if ( sc.sendMessage( A_WIFISTATUS , true ) ) {
         sc.getData( "i" , &status );
         return status;
     }
@@ -53,7 +53,7 @@ int ESPadon::status( void ) {
  * Disconnect
  */
 bool ESPadon::disconnect( void ) {
-    return sc.sendMessage( 3 , false );
+    return sc.sendMessage( A_WIFIDISCONN , false );
 }
 
 
@@ -62,7 +62,7 @@ bool ESPadon::disconnect( void ) {
  */
 int ESPadon::begin( char * ssid , char * password ) {
 	int result = 0;
-    if ( sc.sendMessage( 4 , true , "ss" , ssid , password ) ) {
+    if ( sc.sendMessage( A_WIFIBEGIN , true , "ss" , ssid , password ) ) {
     	sc.getData( "i" , &result );
     	return result;
     }
@@ -74,7 +74,7 @@ int ESPadon::begin( char * ssid , char * password ) {
  * Get the BSSID
  */
 bool ESPadon::BSSID( int * bssid ) {
-    if ( sc.sendMessage( 6 , true ) ) {
+    if ( sc.sendMessage( A_BSSID , true ) ) {
         sc.getData( "iiiiii" , &bssid[0] , &bssid[1] , &bssid[2] , bssid[3] , bssid[4] , bssid[5] );
         return true;
     }
@@ -86,7 +86,7 @@ bool ESPadon::BSSID( int * bssid ) {
  * Get the MAC address
  */
 bool ESPadon::macAddress( int * mac ) {
-    if ( sc.sendMessage( 7 , true ) ) {
+    if ( sc.sendMessage( A_MAC , true ) ) {
         sc.getData( "iiiiii" , &mac[0] , &mac[1] , &mac[2] , &mac[3] , &mac[4] , &mac[5] );
         return true;
     }
@@ -98,7 +98,7 @@ bool ESPadon::macAddress( int * mac ) {
  * Get the IP address
  */
 bool ESPadon::localIP ( int * ip ) {
-    if ( sc.sendMessage( 8 , true ) ) {
+    if ( sc.sendMessage( A_IP , true ) ) {
         sc.getData( "iiii" , &ip[0] , &ip[1] , &ip[2] , &ip[3] );
         return true;
     }
@@ -110,7 +110,7 @@ bool ESPadon::localIP ( int * ip ) {
  * Get the subnet
  */
 bool ESPadon::subnetMask ( int * ip ) {
-    if ( sc.sendMessage( 9 , true ) ) {
+    if ( sc.sendMessage( A_SUBNET , true ) ) {
         sc.getData( "iiii" , &ip[0] , &ip[1] , &ip[2] , &ip[3] );
         return true;
     }
@@ -122,7 +122,7 @@ bool ESPadon::subnetMask ( int * ip ) {
  * Start HTTP server
  */
 bool ESPadon::startHTTPServer ( int port ) {
-    return sc.sendMessage( 10 , false , "i" , port );
+    return sc.sendMessage( A_STARTHTTPSERVER , false , "i" , port );
 }
 
 
@@ -141,7 +141,23 @@ bool ESPadon::getHTTPRequest ( char * url , int urlsize , int max_args , int * r
         int size = va_arg( args , int );
         sc.getString( s , size );
     }
-
     va_end( args );
     return true;
 }
+
+
+/**
+ * Check for incoming messages
+ */
+void ESPadon::check_reception( void ) {
+    sc.check_reception( );
+}
+
+
+/**
+ * Callback for incoming HTTP request
+ */
+void ESPadon::attach( void ( *pcallbackfct )( void ) ) {
+    this->sc.attach( A_HTTPREQUEST , pcallbackfct );
+}
+

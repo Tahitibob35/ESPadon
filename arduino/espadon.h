@@ -22,21 +22,39 @@
 
 #include "Arduino.h"
 
+//Local actions
+#define A_WIFISTATUS             102
+#define A_WIFIDISCONN            103
+#define A_WIFIBEGIN              104
+#define A_SSID                   105
+#define A_BSSID                  106
+#define A_MAC                    107
+#define A_IP                     108
+#define A_SUBNET                 109
+#define A_STARTHTTPSERVER        110
+#define A_HTTPGET                111
+
+//Remote actions
+#define A_HTTPREQUEST            112    //A changer
+
 class ESPadon
 {
     public:
         ESPadon( Stream &s );
-        int httpGET( char * url );                  // Open the URL
-        bool SSID( char * ssid );                   // Get the SSID
-        int status( void );                         // Get the status
-        bool disconnect( void );                    // Disconnects the ESP8266 module from the current network.
-        int begin( char * ssid , char * password ); // Disconnects the ESP8266 module to the network.
-        bool BSSID( int * bssid );                  // Get the BSSID
-        bool macAddress( int * mac );               // Get the Mac Address
-        bool localIP ( int * ip );                  // Get the IP Address
-        bool subnetMask ( int * ip );               // Get the subnet
-        bool startHTTPServer ( int port );          // Start the HTTP server on the specified port
+        int httpGET( char * url );                     // Open the URL
+        bool SSID( char * ssid );                      // Get the SSID
+        int status( void );                            // Get the status
+        bool disconnect( void );                       // Disconnects the ESP8266 module from the current network.
+        int begin( char * ssid , char * password );    // Disconnects the ESP8266 module to the network.
+        bool BSSID( int * bssid );                     // Get the BSSID
+        bool macAddress( int * mac );                  // Get the Mac Address
+        bool localIP ( int * ip );                     // Get the IP Address
+        bool subnetMask ( int * ip );                  // Get the subnet
+        bool startHTTPServer ( int port );             // Start the HTTP server on the specified port
         bool getHTTPRequest ( char * url , int urlsize , int max_args , int * rcv_args , ... );
+        void check_reception( void );                  // Check for incoming messages
+        void (*pHTTPCallBack)(void);                   // Callback for incoming HTTP request
+        void attach( void ( *pcallbackfct )( void ) ); // Attach the HTTP callback
 
         SerialComm sc;
 

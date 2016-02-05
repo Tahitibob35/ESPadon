@@ -17,7 +17,7 @@ void setup() {
   Serial.println( "Ready to play...." );
 
   esp.startHTTPServer ( 80 );
-  esp.sc.attach( 2 , incoming);
+  esp.attach( incoming );
 
 }
 
@@ -27,7 +27,7 @@ void loop( ) {
     //Serial.println ( "A loop..." );
 
     if ( mySerial.available( ) ) {
-        esp.sc.check_reception( );
+        esp.check_reception( );
     }
 
 	/*char nssid[] = "TahitibobNetwork";
@@ -125,9 +125,9 @@ void loop( ) {
     delay(5000);
 
     Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );*/
+    Serial.println( esp.status( ) );
 
-    //delay(2000);
+    delay(2000);*/
 }
 
 void incoming ( void ) {
