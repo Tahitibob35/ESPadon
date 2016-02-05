@@ -9,18 +9,19 @@
 #define ESPADONESP8266_H_
 
 //Local actions
-#define A_WIFISTATUS              2
-#define A_WIFIDISCONN             3
-#define A_WIFIBEGIN               4
-#define A_SSID                    5
-#define A_BSSID                   6
-#define A_MAC                     7
-#define A_IP                      8
-#define A_SUBNET                  9
-#define A_STARTHTTPSERVER        10
+#define A_WIFISTATUS             102
+#define A_WIFIDISCONN            103
+#define A_WIFIBEGIN              104
+#define A_SSID                   105
+#define A_BSSID                  106
+#define A_MAC                    107
+#define A_IP                     108
+#define A_SUBNET                 109
+#define A_STARTHTTPSERVER        110
+#define A_HTTPGET                111
 
 //Remote actions
-#define A_HTTPREQUEST             2
+#define A_HTTPREQUEST            112     //A changer
 
 
 
