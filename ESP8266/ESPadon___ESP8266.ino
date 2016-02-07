@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <SPI.h>
 #include <ESP8266WebServer.h>
+#include <stdio.h>
 
 SerialComm s( Serial );
 ESP8266WebServer* httpserver = NULL;
@@ -150,12 +151,36 @@ void startHTTPServer( void ) {
     s.getData( "i" , &port );
     httpserver = new ESP8266WebServer( port );
     if ( !httpserverconfigured )
+        httpserver->on("/ESPadon", handleESPadonRequest);
         httpserver->onNotFound( handleHTTPRequest );
         httpserverconfigured = true;
     httpserver->begin();
     httpserverstarted = true;
 }
 
+
+void handleESPadonRequest( void ) {
+
+    char tmp[100] = "";
+    char htmlcontent[1000] = "<html>\
+  <head>\
+  </head>\
+  <body>\
+    <h1>ESPadon</h1>\
+    <table>";
+    int i = 0;
+    for( int pin = 0 ; pin < 20 ; pin++ ) {
+        s.sendMessage( A_DIGITALREAD , true , "i" , pin );
+        s.getData( "i" , &i );
+        snprintf( tmp , sizeof( htmlcontent ) , "<tr><td>%d</td><td>%d</td></tr>" , pin , i );
+        strcat( htmlcontent , tmp );
+    }
+
+    strcat( htmlcontent , "</table></body></html>" );
+
+    httpserver->send( 200 , "text/html", htmlcontent);
+
+}
 
 
 
