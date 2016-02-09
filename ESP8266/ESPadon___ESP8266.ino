@@ -151,29 +151,53 @@ void startHTTPServer( void ) {
     s.getData( "i" , &port );
     httpserver = new ESP8266WebServer( port );
     if ( !httpserverconfigured )
-        httpserver->on("/ESPadon", handleESPadonRequest);
-        httpserver->onNotFound( handleHTTPRequest );
+        httpserver->on("/ESPadon", handleESPadonRequest );
+        httpserver->onNotFound( test );
         httpserverconfigured = true;
     httpserver->begin();
     httpserverstarted = true;
 }
 
+void parseURI ( String uri , int * pin , int * value) {
+    int mstart = 0;
+    int mend = 0;
+    mstart = uri.indexOf( "/" , 1 );                    // pin
+    mend = uri.indexOf( "/" , mstart + 1 );             // value
+
+    * pin = uri.substring( mstart + 1 , mend ).toInt( );
+    * value = uri.substring( mend + 1 ).toInt( );
+}
+
 
 void handleESPadonRequest( void ) {
 
+
+
+
+
     char tmp[100] = "";
-    char htmlcontent[1000] = "<html>\
+    char htmlcontent[2500] = "<html>\
   <head>\
   </head>\
   <body>\
     <h1>ESPadon</h1>\
     <table>";
     int i = 0;
-    for( int pin = 0 ; pin < 20 ; pin++ ) {
-        s.sendMessage( A_DIGITALREAD , true , "i" , pin );
+    for( uint8_t pin = 0 ; pin < 20 ; pin++ ) {
+        if ( pin < 14 ) {
+            i = s.rDigitalRead( pin );
+        }
+        else {
+            i = s.rAnalogRead( pin );
+        }
         s.getData( "i" , &i );
-        snprintf( tmp , sizeof( htmlcontent ) , "<tr><td>%d</td><td>%d</td></tr>" , pin , i );
+        snprintf( tmp , sizeof( tmp ) , "<tr><td>%d</td><td>%d</td>" , pin , i );
         strcat( htmlcontent , tmp );
+        snprintf( tmp , sizeof( tmp ) , "<td><a href=\"/rdigitalwrite/%d/1\">on</a></td>" , pin );
+        strcat( htmlcontent , tmp );
+        snprintf( tmp , sizeof( tmp ) , "<td><a href=\"/rdigitalwrite/%d/0\">off</a></td>" , pin );
+                strcat( htmlcontent , tmp );
+        strcat( htmlcontent , "</tr>" );
     }
 
     strcat( htmlcontent , "</table></body></html>" );
@@ -182,7 +206,30 @@ void handleESPadonRequest( void ) {
 
 }
 
+void test ( void ) {
+    if ( httpserver->uri().startsWith( "/digitalwrite" ) ) {
+        int pin = 0;
+        int value = 0;
+        parseURI( httpserver->uri() , &pin , &value );
+        s.rDigitalWrite( pin , value );
+        httpserver->send( 200 , "text/html", " ");
+    }
+    else if ( httpserver->uri().startsWith( "/rdigitalwrite" ) ) {
+        int pin = 0;
+        int value = 0;
+        parseURI( httpserver->uri() , &pin , &value );
+        s.rDigitalWrite( pin , value );
+        httpredirect( "/ESPadon" );
+    }
 
 
+}
+
+void httpredirect ( const char * uri ) {
+    char body[70] = "HTTP/1.1 302 Found\r\nLocation: ";
+    strcat( body , uri );
+    strcat( body , "\r\n" );
+    httpserver->sendContent(body);
+}
 
 
