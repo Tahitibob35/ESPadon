@@ -9,8 +9,8 @@ SerialComm s( Serial );
 ESP8266WebServer* httpserver = NULL;
 bool httpserverstarted = false;
 bool httpserverconfigured = false;
-
-
+char htmlcontent[5000] = {0};
+int htmllength = 0;
 
 void setup( ) {
     // put your setup code here, to run once:
@@ -171,17 +171,8 @@ void parseURI ( String uri , int * pin , int * value) {
 
 void handleESPadonRequest( void ) {
 
+    htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<html><head></head><body><h1>ESPadon</h1><table>" );
 
-
-
-
-    char tmp[100] = "";
-    char htmlcontent[2500] = "<html>\
-  <head>\
-  </head>\
-  <body>\
-    <h1>ESPadon</h1>\
-    <table>";
     int i = 0;
     for( uint8_t pin = 0 ; pin < 20 ; pin++ ) {
         if ( pin < 14 ) {
@@ -191,18 +182,16 @@ void handleESPadonRequest( void ) {
             i = s.rAnalogRead( pin );
         }
         s.getData( "i" , &i );
-        snprintf( tmp , sizeof( tmp ) , "<tr><td>%d</td><td>%d</td>" , pin , i );
-        strcat( htmlcontent , tmp );
-        snprintf( tmp , sizeof( tmp ) , "<td><a href=\"/rdigitalwrite/%d/1\">on</a></td>" , pin );
-        strcat( htmlcontent , tmp );
-        snprintf( tmp , sizeof( tmp ) , "<td><a href=\"/rdigitalwrite/%d/0\">off</a></td>" , pin );
-                strcat( htmlcontent , tmp );
-        strcat( htmlcontent , "</tr>" );
-    }
+        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<tr><td>%d</td><td>%d</td>" , pin , i );
+        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<td><a href=\"/rdigitalwrite/%d/1\">on</a></td>" , pin );
+        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<td><a href=\"/rdigitalwrite/%d/0\">off</a></td></tr>" , pin );
 
-    strcat( htmlcontent , "</table></body></html>" );
+    }
+    htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "</table></body></html>" );
 
     httpserver->send( 200 , "text/html", htmlcontent);
+    htmllength = 0;
+    memset( htmlcontent , 0 , sizeof( htmlcontent ) );
 
 }
 
