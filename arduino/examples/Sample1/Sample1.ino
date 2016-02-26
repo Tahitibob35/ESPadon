@@ -44,7 +44,7 @@ void loop( ) {
     }
 
 	/*char nssid[] = "TahitibobNetwork";
-    char npass[] = "calimeroestgentil";
+    char npass[] = "XXXX";
     int res = 0;
     res  = esp.begin( nssid , npass );
     delay(5000);
