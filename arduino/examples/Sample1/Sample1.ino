@@ -8,6 +8,8 @@
 SoftwareSerial mySerial( 11 , 10 );
 ESPadon esp( mySerial );
 
+#define __AVR_ATmega328__
+
 
 void setup() {
   Serial.begin( 9600 );
@@ -18,6 +20,17 @@ void setup() {
 
   esp.startHTTPServer ( 80 );
   esp.attach( incoming );
+
+  int ip[4];
+  if ( esp.localIP( ip ) ){
+      Serial.print( "IP : " );
+      for (int i=0 ; i<4 ; i++ ) {
+          Serial.print( ip[i] , DEC );
+      }
+      Serial.println( "" );
+  }
+
+  pinMode( 5 , OUTPUT );
 
 }
 
@@ -125,37 +138,20 @@ void loop( ) {
     delay(5000);
 
     Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
+    Serial.println( esp.status( ) );*/
 
-    delay(2000);*/
+
+
+    //delay(2000);
 }
 
 void incoming ( void ) {
     Serial.println( "incoming !!!" );
     char url[30] = "";
-    char val1[20] = "";
-    char val2[20] = "";
-    char val3[20] = "";
-    int rcv_args = 0;
 
-    int max_args = 3;
-
-
-    esp.getHTTPRequest ( url , sizeof( url ) , max_args , &rcv_args\
-                       , val1 , sizeof(val1) \
-                       , val2 , sizeof(val2) \
-                       , val3 , sizeof(val3) \
-                       );
+    esp.getHTTPRequest ( url , sizeof( url ) );
 
     Serial.print( "Url : " );
     Serial.println( url );
-    Serial.print( "args_count : " );
-    Serial.println( rcv_args );
-    Serial.print( "val1 : " );
-    Serial.println( val1 );
-    Serial.print( "val2 : " );
-    Serial.println( val2 );
-    Serial.print( "val3 : " );
-    Serial.println( val3 );
 
 }

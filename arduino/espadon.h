@@ -51,7 +51,7 @@ class ESPadon
         bool localIP ( int * ip );                     // Get the IP Address
         bool subnetMask ( int * ip );                  // Get the subnet
         bool startHTTPServer ( int port );             // Start the HTTP server on the specified port
-        bool getHTTPRequest ( char * url , int urlsize , int max_args , int * rcv_args , ... );
+        bool getHTTPRequest ( char * url , int urlsize );
         void check_reception( void );                  // Check for incoming messages
         void (*pHTTPCallBack)(void);                   // Callback for incoming HTTP request
         void attach( void ( *pcallbackfct )( void ) ); // Attach the HTTP callback

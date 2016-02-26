@@ -9,6 +9,7 @@
 ESPadon::ESPadon( Stream &s ): _serial( &s ) {
 
 	this->sc = SerialComm ( *_serial );
+	this->pHTTPCallBack = NULL;
 }
 
 /**
@@ -129,19 +130,9 @@ bool ESPadon::startHTTPServer ( int port ) {
 /**
  * Get HTTP request
  */
-bool ESPadon::getHTTPRequest ( char * url , int urlsize , int max_args , int * rcv_args ,... ) {
-    va_list args;
-    va_start( args, rcv_args );
+bool ESPadon::getHTTPRequest ( char * url , int urlsize ) {
 
-    sc.getString( url , urlsize);
-    *rcv_args = sc.getInt( );
-
-    for ( int i = 0 ; i < min(max_args , *rcv_args ) ; i++) {
-        char *s = va_arg( args , char * );
-        int size = va_arg( args , int );
-        sc.getString( s , size );
-    }
-    va_end( args );
+    sc.getData( "s" , url, sizeof( url ) );
     return true;
 }
 
