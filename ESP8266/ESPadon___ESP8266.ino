@@ -9,36 +9,6 @@ SerialComm s( Serial );
 ESP8266WebServer* httpserver = NULL;
 bool httpserverstarted = false;
 bool httpserverconfigured = false;
-char htmlcontent[5000] = {0};
-int htmllength = 0;
-
-void setup( ) {
-    // put your setup code here, to run once:
-
-    Serial.begin( 9600 );
-    s.attach( A_WIFISTATUS , wifiStatus );
-    s.attach( A_WIFIDISCONN , wifiDisconnect );
-    s.attach( A_WIFIBEGIN , wifiBegin );
-    s.attach( A_SSID , wifiSSID );
-    s.attach( A_BSSID , wifiBSSID );
-    s.attach( A_MAC , wifiMAC );
-    s.attach( A_IP , wifiIP );
-    s.attach( A_SUBNET , wifiSubnet );
-    s.attach( A_STARTHTTPSERVER , startHTTPServer );
-
-
-
-}
-
-void loop () {
-    // put your main code here, to run repeatedly:
-    s.check_reception( );
-
-    if ( httpserverstarted ) {
-        httpserver->handleClient();
-    }
-}
-
 
 /**
  * Return the status of the Wifi connection
@@ -141,22 +111,6 @@ void handleHTTPRequest( void ) {
 }
 
 
-/**
- * Start HTTP server
- */
-void startHTTPServer( void ) {
-    if ( httpserverstarted )
-        return;
-    int port = 0;
-    s.getData( "i" , &port );
-    httpserver = new ESP8266WebServer( port );
-    if ( !httpserverconfigured )
-        httpserver->on("/ESPadon", handleESPadonRequest );
-        httpserver->onNotFound( test );
-        httpserverconfigured = true;
-    httpserver->begin();
-    httpserverstarted = true;
-}
 
 void parseURI ( String uri , int * pin , int * value) {
     int mstart = 0;
@@ -170,55 +124,215 @@ void parseURI ( String uri , int * pin , int * value) {
 
 
 void handleESPadonRequest( void ) {
-
-    htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<html><head></head><body><h1>ESPadon</h1><table>" );
-
+  
+    String htmlcontent = "";
+    htmlcontent += "<html><head></head><body><h1>ESPadon</h1><table border=\"1\">";
+    
     int i = 0;
-    for( uint8_t pin = 0 ; pin < 20 ; pin++ ) {
-        if ( pin < 14 ) {
-            i = s.rDigitalRead( pin );
+    int rw = 0;
+    int pwm_cap = 0;
+    int pwm_enabled = 0;
+    int value = 0; 
+    
+    htmlcontent +=  "<tr><td><b>Pin</b></td><td><b>Value</b></td><td><b>Action</b></td></tr>\r\n\r\n";
+    for( int pin = 0 ; pin < 14 ; pin++ ) {
+        s.rdigitalPinState( pin , &rw , &pwm_cap , &pwm_enabled , &value );
+        htmlcontent +=  "<tr><td>";
+        htmlcontent += pin;
+        htmlcontent +=  "</td>";
+        //htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) - htmllength , "<td>%d</td>" , rw );
+        //htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) - htmllength , "<td>%d</td>" , pwm_cap );
+        //htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) - htmllength , "<td>%d</td>" , pwm_enabled );
+
+        char color[] = "yellow";
+        if ( pwm_enabled == 0 ) {
+            if ( value == HIGH ) {
+                strcpy( color , "green" ); 
+            }
+            else {
+                strcpy( color , "red" ); 
+            }                
+        }
+
+        if ( pwm_enabled ) {
+            htmlcontent += "<td bgcolor=\"";
+            htmlcontent +=  color;
+            htmlcontent += "\">";
+            htmlcontent += value;
+            htmlcontent += "</td>";
         }
         else {
-            i = s.rAnalogRead( pin );
+            char svalue[] = "HIGH";
+            if ( value == LOW ) strcpy( svalue , "LOW" );
+            htmlcontent += "<td bgcolor=\"";
+            htmlcontent += color;
+            htmlcontent += "\">";
+            htmlcontent += svalue;
+            htmlcontent += "</td>" ;
+        
         }
-        s.getData( "i" , &i );
-        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<tr><td>%d</td><td>%d</td>" , pin , i );
-        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<td><a href=\"/rdigitalwrite/%d/1\">on</a></td>" , pin );
-        htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "<td><a href=\"/rdigitalwrite/%d/0\">off</a></td></tr>" , pin );
+        if ( rw ) {
+            htmlcontent += "<td><a href=\"/rdigitalwrite/";
+            htmlcontent += pin;
+            htmlcontent += "/1\">HIGH</a>&nbsp;<a href=\"/rdigitalwrite/";
+            htmlcontent += pin;
+            htmlcontent += "/0\">LOW</a>";
 
+            if ( pwm_cap ) {
+                htmlcontent += "<form action=\"/ranalogwrite\" method=\"get\">";
+                htmlcontent += "<input type=\"text\" name=\"value\" size=\"3\">";
+                htmlcontent += "<input type=\"hidden\" name=\"pin\" value=\"";
+                htmlcontent += pin;
+                htmlcontent += "\"><input type=\"submit\" value=\"Write\"></form>";
+            }
+
+                
+            htmlcontent += "</td>";
+        }
+        else {
+            htmlcontent += "<td></td>";
+        }
+        htmlcontent += "</tr>";
+        
     }
-    htmllength += snprintf( htmlcontent + htmllength , sizeof( htmlcontent ) , "</table></body></html>" );
-
+    for ( int pin = 14 ; pin < 20 ; pin++ ) {
+        value = s.rAnalogRead( pin );
+        htmlcontent += "<td>";
+        htmlcontent += pin;
+        htmlcontent += "</td><td bgcolor=\"yellow\">";
+        htmlcontent += value;
+        htmlcontent += "</td><td></td></tr>";
+    }
+    
+    htmlcontent +=  "</table></body></html>";
+    //Serial.print( htmlcontent );
     httpserver->send( 200 , "text/html", htmlcontent);
-    htmllength = 0;
-    memset( htmlcontent , 0 , sizeof( htmlcontent ) );
-
 }
 
-void test ( void ) {
+
+void handleRequest ( void ) {
     if ( httpserver->uri().startsWith( "/digitalwrite" ) ) {
         int pin = 0;
         int value = 0;
         parseURI( httpserver->uri() , &pin , &value );
         s.rDigitalWrite( pin , value );
-        httpserver->send( 200 , "text/html", " ");
+        httpserver->send( 200 , "text/html", "Success");
+        return;
+    }
+    else if ( httpserver->uri().startsWith( "/digitalread" ) ) {
+        int pin = 0;
+        int value = 0;
+        parseURI( httpserver->uri() , &pin , &value );
+        value = s.rDigitalRead( pin );
+        httpserver->send( 200 , "text/plain", String( value ) );
+        return;
+    }
+    else if ( httpserver->uri().startsWith( "/analogread" ) ) {
+        int pin = 0;
+        int value = 0;
+        parseURI( httpserver->uri() , &pin , &value );
+        value = s.rAnalogRead( pin );
+        httpserver->send( 200 , "text/plain", String( value ) );
+        return;
+    }
+    else if ( httpserver->uri().startsWith( "/analogwrite" ) ) {
+        int pin = 0;
+        int value = 0;
+        parseURI( httpserver->uri() , &pin , &value );
+        s.rAnalogWrite( pin , value );
+        httpserver->send( 200 , "text/html", "Success");
+        return;
     }
     else if ( httpserver->uri().startsWith( "/rdigitalwrite" ) ) {
         int pin = 0;
         int value = 0;
         parseURI( httpserver->uri() , &pin , &value );
         s.rDigitalWrite( pin , value );
-        httpredirect( "/ESPadon" );
+        httpserver->sendHeader("Location", "/ESPadon");
+        httpserver->send(302, "redirecting....");  
+        return;
     }
+    else if ( httpserver->uri().startsWith( "/ranalogwrite" ) ) {
+        int pin = -1;
+        int value = -1;
+
+        for ( uint8_t i = 0; i < httpserver->args(); i++ ) {
+            if ( httpserver->argName( i ) == "value" )
+                value = httpserver->arg ( i ).toInt();
+            if ( httpserver->argName( i ) == "pin" )
+                pin = httpserver->arg ( i ).toInt();          
+        }
+
+        if (( pin != -1) && ( value != -1 ) )
+            s.rAnalogWrite( pin , value );
+        httpserver->sendHeader( "Location", "/ESPadon" );
+        httpserver->send( 302, "redirecting...." );  
+        return;
+    }
+    else {
+      String uri = httpserver->uri();
+      uri += "?";
+      for ( uint8_t i = 0; i < httpserver->args(); i++ ) {
+            uri += httpserver->argName( i );
+            uri += "=";
+            uri +=  httpserver->arg ( i );   
+            if ( i < ( httpserver->args() - 1) ) uri += "&";
+      }
+      char a_uri[ uri.length() + 1 ]; 
+      memset( a_uri , 0 , sizeof( a_uri ) );   // A optimiser....
+      uri.toCharArray( a_uri , sizeof( a_uri ) );
+      s.sendMessage( A_HTTPREQUEST , false , "s" , a_uri );  
+      httpserver->send( 200 , "text/html", "Success");    
+
+      return;
+      
+      
+    }
+}
+
+
+/**
+ * Start HTTP server
+ */
+void startHTTPServer( void ) {
+    if ( httpserverstarted )
+        return;
+    int port = 0;
+    s.getData( "i" , &port );
+    httpserver = new ESP8266WebServer( port );
+    if ( !httpserverconfigured )
+        httpserver->on("/ESPadon", handleESPadonRequest );
+        httpserver->onNotFound( handleRequest );
+        httpserverconfigured = true;
+    httpserver->begin();
+    httpserverstarted = true;
+}
+
+
+void setup( ) {
+    // put your setup code here, to run once:
+
+    Serial.begin( 9600 );
+    s.attach( A_WIFISTATUS , wifiStatus );
+    s.attach( A_WIFIDISCONN , wifiDisconnect );
+    s.attach( A_WIFIBEGIN , wifiBegin );
+    s.attach( A_SSID , wifiSSID );
+    s.attach( A_BSSID , wifiBSSID );
+    s.attach( A_MAC , wifiMAC );
+    s.attach( A_IP , wifiIP );
+    s.attach( A_SUBNET , wifiSubnet );
+    s.attach( A_STARTHTTPSERVER , startHTTPServer );
+
 
 
 }
 
-void httpredirect ( const char * uri ) {
-    char body[70] = "HTTP/1.1 302 Found\r\nLocation: ";
-    strcat( body , uri );
-    strcat( body , "\r\n" );
-    httpserver->sendContent(body);
-}
+void loop () {
+    // put your main code here, to run repeatedly:
+    s.check_reception( );
 
+    if ( httpserverstarted ) {
+        httpserver->handleClient();
+    }
+}
 
