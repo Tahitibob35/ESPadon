@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <SPI.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
 #include <stdio.h>
 
 SerialComm s( Serial );
@@ -128,15 +129,14 @@ void handleESPadonRequest( void ) {
     String htmlcontent = "";
     htmlcontent += "<html><head></head><body><h1>ESPadon</h1><table border=\"1\">";
     
-    int i = 0;
-    int rw = 0;
+    int writable = 0;
     int pwm_cap = 0;
     int pwm_enabled = 0;
     int value = 0; 
     
     htmlcontent +=  "<tr><td><b>Pin</b></td><td><b>Value</b></td><td><b>Action</b></td></tr>\r\n\r\n";
     for( int pin = 0 ; pin < 14 ; pin++ ) {
-        s.rdigitalPinState( pin , &rw , &pwm_cap , &pwm_enabled , &value );
+        s.rdigitalPinState( pin , &writable , &pwm_cap , &pwm_enabled , &value );
         htmlcontent +=  "<tr><td>";
         htmlcontent += pin;
         htmlcontent +=  "</td>";
@@ -171,7 +171,7 @@ void handleESPadonRequest( void ) {
             htmlcontent += "</td>" ;
         
         }
-        if ( rw ) {
+        if ( writable ) {
             htmlcontent += "<td><a href=\"/rdigitalwrite/";
             htmlcontent += pin;
             htmlcontent += "/1\">HIGH</a>&nbsp;<a href=\"/rdigitalwrite/";
@@ -309,6 +309,19 @@ void startHTTPServer( void ) {
 }
 
 
+/*
+ * outgoingHTTPRequest
+ */
+void outgoingHTTPRequest( void ) {
+    char url[200] = {0};
+    s.getData( "s" , &url , sizeof( url ) );
+    HTTPClient http;
+    http.begin( url );
+    int httpCode = http.GET();
+    s.sendAck( "i" , httpCode );
+}
+
+
 void setup( ) {
     // put your setup code here, to run once:
 
@@ -322,10 +335,10 @@ void setup( ) {
     s.attach( A_IP , wifiIP );
     s.attach( A_SUBNET , wifiSubnet );
     s.attach( A_STARTHTTPSERVER , startHTTPServer );
-
-
+    s.attach( A_HTTPGET , outgoingHTTPRequest );
 
 }
+
 
 void loop () {
     // put your main code here, to run repeatedly:

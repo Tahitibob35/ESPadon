@@ -18,10 +18,10 @@
 #define A_IP                     108
 #define A_SUBNET                 109
 #define A_STARTHTTPSERVER        110
-#define A_HTTPGET                111
+#define A_HTTPGET                111     //HTTP request from arduino
 
 //Remote actions
-#define A_HTTPREQUEST            112     //A changer
+#define A_HTTPREQUEST            112     //HTTP request to arduino
 
 
 
