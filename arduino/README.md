@@ -25,7 +25,7 @@ result  = esp.begin( my_ssid , my_passphrase );  # https://www.arduino.cc/en/Ref
 delay(5000);
 
 char url[] = "http://192.168.0.10:8000/";        # Outgoing HTTP request
-int wstatus = esp.httpGET( url );
+int wstatus = esp.urlOpen( url );
 Serial.print( "HTTP Status : " );
 Serial.println( wstatus );
 
@@ -62,7 +62,34 @@ for (int i=0 ; i<4 ; i++ ) {
 
 Serial.println( "Disconnect" );                  # Disconnect from the current Wifi network
 esp.disconnect( );                               # https://www.arduino.cc/en/Reference/WiFiDisconnect
-
 }
+
+esp.attach( incoming );                          # Attach a callback function for incoming HTTP requests
 ```
 
+# Embedded Web server
+
+* A basic web interface
+```
+http://192.168.0.10/ESPadon
+```
+
+* digitalWrite request
+```
+http://192.168.0.10/digitalwrite/13/1
+```
+
+* analogWrite request
+```
+http://192.168.0.10/analogwrite/13/1
+```
+
+* digitalRead request
+```
+http://192.168.0.10/digitalread/6
+```
+
+* analogWrite request
+```
+http://192.168.0.10/analogread/14
+```
