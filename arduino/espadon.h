@@ -41,7 +41,7 @@ class ESPadon
 {
     public:
         ESPadon( Stream &s );
-        int httpGET( char * url );                     // Open the URL
+        int urlOpen( char * url );                     // Open the URL
         bool SSID( char * ssid );                      // Get the SSID
         int status( void );                            // Get the status
         bool disconnect( void );                       // Disconnects the ESP8266 module from the current network.
@@ -51,7 +51,7 @@ class ESPadon
         bool localIP ( int * ip );                     // Get the IP Address
         bool subnetMask ( int * ip );                  // Get the subnet
         bool startHTTPServer ( int port );             // Start the HTTP server on the specified port
-        bool getHTTPRequest ( char * url , int urlsize );
+        bool incomingHTTPRequest ( char * url , int urlsize );
         void check_reception( void );                  // Check for incoming messages
         void (*pHTTPCallBack)(void);                   // Callback for incoming HTTP request
         void attach( void ( *pcallbackfct )( void ) ); // Attach the HTTP callback

@@ -15,7 +15,7 @@ ESPadon::ESPadon( Stream &s ): _serial( &s ) {
 /**
  * Open the URL
  */
-int ESPadon::httpGET( char * url ) {
+int ESPadon::urlOpen( char * url ) {
     if ( sc.sendMessage( A_HTTPGET , true , "s", url) ) {
         int wstatus = 0;
         sc.getData( "i" , &wstatus );
@@ -130,9 +130,9 @@ bool ESPadon::startHTTPServer ( int port ) {
 /**
  * Get HTTP request
  */
-bool ESPadon::getHTTPRequest ( char * url , int urlsize ) {
+bool ESPadon::incomingHTTPRequest ( char * url , int urlsize ) {
 
-    sc.getData( "s" , url, sizeof( url ) );
+    this->sc.getData( "s" , url, urlsize );
     return true;
 }
 

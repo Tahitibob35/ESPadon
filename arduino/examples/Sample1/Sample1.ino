@@ -10,6 +10,8 @@ ESPadon esp( mySerial );
 
 #define __AVR_ATmega328__
 
+void spark ( void );
+
 
 void setup() {
   Serial.begin( 9600 );
@@ -138,20 +140,34 @@ void loop( ) {
     delay(5000);
 
     Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );*/
+    Serial.println( esp.status( ) );
 
 
-
-    //delay(2000);
+    spark ( );
+    delay(2000);*/
 }
 
 void incoming ( void ) {
     Serial.println( "incoming !!!" );
     char url[30] = "";
 
-    esp.getHTTPRequest ( url , sizeof( url ) );
+    esp.incomingHTTPRequest ( url , sizeof( url ) );
 
     Serial.print( "Url : " );
     Serial.println( url );
 
+}
+
+
+void spark ( void ) {
+    static int i = 0;
+    int result = 0;
+
+    char sparkurl[] = "http://data.sparkfun.com/input/wpYGMnD506T7GV6b6q31?private_key=wzMVG9yYp5T82rndnGxW&val1=10";
+
+    result =  esp.urlOpen( sparkurl );
+
+    Serial.println( result );
+
+    i++;
 }
