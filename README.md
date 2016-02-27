@@ -4,6 +4,12 @@
 ESPadon simlifies the use of the ESP8266 module from your Arduino board.
 The project provides an Arduino library and a dedicated ESP8266 firmware.
 
+## Web interface
+
+It provides a basic web interface :
+
+![ESPADON](https://github.com/Tahitibob35/ESPadon/raw/master/images/web_interface.png)
+
 ## Example
 
 ```C
