@@ -8,29 +8,36 @@
 SoftwareSerial mySerial( 11 , 10 );
 ESPadon esp( mySerial );
 
-#define __AVR_ATmega328__
+unsigned long previousMillis = 0;
+const long interval = 5000;
 
-void spark ( void );
-
+void writetosparkfun ( void );
 
 void setup() {
   Serial.begin( 9600 );
   mySerial.begin( 9600 );
 
+  Serial.println( "Starting...." );
+  
+  esp.attach( incoming );  
 
-  Serial.println( "Ready to play...." );
+  esp.startHTTPServer ( 80 );  
+  Serial.println( "HTTP server started..." );
 
-  esp.startHTTPServer ( 80 );
-  esp.attach( incoming );
+  Serial.println("Connecting to the wifi network");
+  char nssid[] = "TahitibobNetwork";
+  char npass[] = "ABCDEF1234";
+  int result = 0;
+  result  = esp.begin( nssid , npass );
 
-  int ip[4];
-  if ( esp.localIP( ip ) ){
-      Serial.print( "IP : " );
-      for (int i=0 ; i<4 ; i++ ) {
-          Serial.print( ip[i] , DEC );
-      }
-      Serial.println( "" );
-  }
+  
+  Serial.println("");
+  do {
+    result = esp.status( );
+    Serial.print(".");
+  } while (result != WL_CONNECTED );
+  Serial.println("");
+  Serial.println("");
 
   pinMode( 5 , OUTPUT );
 
@@ -39,117 +46,87 @@ void setup() {
 
 void loop( ) {
 
-    //Serial.println ( "A loop..." );
-
     if ( mySerial.available( ) ) {
         esp.check_reception( );
     }
 
-	/*char nssid[] = "TahitibobNetwork";
-    char npass[] = "XXXX";
-    int res = 0;
-    res  = esp.begin( nssid , npass );
-    delay(5000);
+    unsigned long currentMillis = millis();
 
-    Serial.println( "Send msg" );
-    char url[] = "http://192.168.0.10:8000/";
-    int wstatus = esp.httpGET( url );
-    Serial.print( "HTTP Status : " );
-    Serial.println( wstatus );
-
-    char ssid[50] = "";
-    if ( esp.SSID( ssid ) ){
-    	Serial.print( "SSID : " );
-    	Serial.println( ssid );
-    }
-
-
-    Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
-    delay(2000);
-
-    delay(5000);
-
-    int mac[6];
-    if ( esp.macAddress( mac ) ){
-    	Serial.print( "MAC : " );
-    	for (int i=0 ; i<6 ; i++ ) {
-    	    Serial.print( mac[i] , HEX );
-    	}
-    	Serial.println( "" );
-    }
-
-    int bssid[6];
-    if ( esp.BSSID( bssid ) ){
-    	Serial.print( "BSSID : " );
-    	for (int i=0 ; i<6 ; i++ ) {
-    	    Serial.print( bssid[i] , HEX );
-    	}
-    	Serial.println( "" );
-    }
-
-    int ip[4];
-    if ( esp.localIP( ip ) ){
-    	Serial.print( "IP : " );
-    	for (int i=0 ; i<4 ; i++ ) {
-    	    Serial.print( ip[i] , DEC );
-    	}
-    	Serial.println( "" );
-    }
-
-    if ( esp.subnetMask( ip ) ){
-    	Serial.print( "Subnet mask : " );
-    	for (int i=0 ; i<4 ; i++ ) {
-    	    Serial.print( ip[i] , DEC );
-    	}
-    	Serial.println( "" );
-    }
-
-
-
-    Serial.println( "Disconnect" );
-    esp.disconnect( );
-
-    delay(5000);
-
-    Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
-
-    delay(5000);
-
-    char nssid[] = "TahitibobNetwork";
-    char npass[] = "calimeroestgentil";
-    int res = 0;
-    res  = esp.begin( nssid , npass );
-
-    Serial.print( "Connection result : " );
-    Serial.println( res );
-
-
-
-    delay(5000);
-
-    Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
-
-    delay(5000);
-
-    Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
-
-    delay(5000);
-
-    Serial.print( "ESP8266 status : " );
-    Serial.println( esp.status( ) );
-
-
-    spark ( );
-    delay(2000);*/
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+      
+      /* Outgoing http request
+      Serial.println( "Send msg" );
+      char url[] = "http://192.168.0.10:8000/";
+      int wstatus = esp.httpGET( url );
+      Serial.print( "HTTP Status : " );
+      Serial.println( wstatus );
+      */
+  
+      char ssid[50] = "";
+      if ( esp.SSID( ssid ) ){
+      	Serial.print( "SSID : " );
+      	Serial.println( ssid );
+      }
+  
+  
+      Serial.print( "ESP8266 status : " );
+      Serial.println( esp.status( ) );
+      
+  
+      int mac[6];
+      if ( esp.macAddress( mac ) ){
+      	Serial.print( "MAC : " );
+      	for (int i=0 ; i<6 ; i++ ) {
+      	    Serial.print( mac[i] , HEX );
+            if ( i != 5 ) Serial.print( " " );
+      	}
+      	Serial.println( "" );
+      }
+  
+      int ip[4];
+      if ( esp.localIP( ip ) ){
+      	Serial.print( "IP : " );
+      	for (int i=0 ; i<4 ; i++ ) {
+      	    Serial.print( ip[i] , DEC );
+            if ( i != 3 ) Serial.print( "." );
+      	}
+      	Serial.println( "" );
+      }
+  
+      if ( esp.subnetMask( ip ) ){
+      	Serial.print( "Subnet mask : " );
+      	for (int i=0 ; i<4 ; i++ ) {
+      	    Serial.print( ip[i] , DEC );
+            if ( i != 3 ) Serial.print( "." );
+      	}
+      	Serial.println( "" );
+      }
+  
+  
+      /*
+      Serial.println( "Disconnect" );
+      esp.disconnect( );
+      */
+  
+      Serial.print( "ESPadon web interface : http://" );
+      if ( esp.localIP( ip ) ){
+        for (int i=0 ; i<4 ; i++ ) {
+            Serial.print( ip[i] , DEC );
+            if ( i != 3 ) Serial.print( "." );
+        }
+        Serial.println( ":80/ESPadon" );
+      }
+  
+  
+  
+      Serial.println( "-------------------------------------" );
+  }
 }
-
+  
 void incoming ( void ) {
-    Serial.println( "incoming !!!" );
-    char url[30] = "";
+    Serial.println( "Incoming HTTP request !!!" );
+    char url[50] = "";
 
     esp.incomingHTTPRequest ( url , sizeof( url ) );
 
@@ -159,11 +136,12 @@ void incoming ( void ) {
 }
 
 
+// Another example of outgoing HTTP request
 void spark ( void ) {
     static int i = 0;
     int result = 0;
 
-    char sparkurl[] = "http://data.sparkfun.com/input/wpYGMnD506T7GV6b6q31?private_key=wzMVG9yYp5T82rndnGxW&val1=10";
+    char sparkurl[] = "http://data.sparkfun.com/input/wpYGMnD506T7GV6b6q31?private_key=XXXXXXXXXXXXXx&val1=10";
 
     result =  esp.urlOpen( sparkurl );
 

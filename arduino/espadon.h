@@ -22,6 +22,16 @@
 
 #include "Arduino.h"
 
+//WIFI STATUS
+
+#define WL_IDLE_STATUS      0
+#define WL_NO_SSID_AVAIL    1
+#define WL_SCAN_COMPLETED   2
+#define WL_CONNECTED        3
+#define WL_CONNECT_FAILED   4
+#define WL_CONNECTION_LOST  5
+#define WL_DISCONNECTED     6
+
 //Local actions
 #define A_WIFISTATUS             102
 #define A_WIFIDISCONN            103
